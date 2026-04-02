@@ -24,7 +24,8 @@ pub enum Token {
     NOT(String),
     AND(String),
     OR(String),
-    EOF(String),
+    COMMA,
+    EOF,
 }
 
 impl Clone for Token {
@@ -48,7 +49,8 @@ impl Clone for Token {
             Token::OR(value) => Token::OR(value.clone()),
             Token::LPAREN(value) => Token::LPAREN(value.clone()),
             Token::RPAREN(value) => Token::RPAREN(value.clone()),
-            Token::EOF(value) => Token::EOF(value.clone()),
+            Token::COMMA => Token::COMMA,
+            Token::EOF => Token::EOF,
         }
     }
 }
@@ -180,6 +182,10 @@ impl Lexer {
                     self.advance();
                     self.tokens.push(Token::OR(String::from("|")));
                 }
+                cur if cur == ',' => {
+                    self.advance();
+                    self.tokens.push(Token::COMMA);
+                }
                 cur if cur == '(' => self.tokens.push(Token::LPAREN(String::from("("))),
                 cur if cur == ')' => self.tokens.push(Token::RPAREN(String::from(")"))),
                 ' ' | '\t' | '\n' => self.advance(),
@@ -187,7 +193,7 @@ impl Lexer {
             }
             self.advance();
         }
-        self.tokens.push(Token::EOF(String::from("EOF")));
+        self.tokens.push(Token::EOF);
         self.tokens.clone()
     }
 }

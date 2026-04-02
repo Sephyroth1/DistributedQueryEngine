@@ -1,3 +1,4 @@
+pub mod base;
 pub mod lexer;
 pub mod parser;
 
@@ -18,7 +19,7 @@ mod tests {
             vec![
                 Token::SELECT("select".to_string()),
                 Token::IDENT("hello".to_string()),
-                Token::EOF("EOF".to_string())
+                Token::EOF
             ]
         );
     }
