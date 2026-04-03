@@ -6,49 +6,61 @@ use std::vec::Vec;
 
 #[derive(Debug, PartialEq)]
 pub enum Token {
-    SELECT(String),
-    WHERE(String),
-    FROM(String),
+    SELECT,
+    WHERE,
+    FROM,
     IDENT(String),
     NUMBER(u64),
-    STRING(String),
-    EQ(String),
-    ASSIGN(String),
-    GE(String),
-    GT(String),
-    LPAREN(String),
-    RPAREN(String),
-    LT(String),
-    LE(String),
-    NE(String),
-    NOT(String),
-    AND(String),
-    OR(String),
-    EOF(String),
+    // STRING(String),
+    EQ,
+    ASSIGN,
+    GE,
+    GT,
+    LPAREN,
+    RPAREN,
+    LT,
+    LE,
+    NE,
+    NOT,
+    AND,
+    OR,
+    PLUS,
+    MINUS,
+    STAR,
+    SLASH,
+    COMMA,
+    EOF,
+    WILDCARD,
 }
 
 impl Clone for Token {
     fn clone(&self) -> Self {
         match self {
-            Token::SELECT(value) => Token::SELECT(value.clone()),
-            Token::WHERE(value) => Token::WHERE(value.clone()),
-            Token::FROM(value) => Token::FROM(value.clone()),
+            Token::SELECT => Token::SELECT,
+            Token::WHERE => Token::WHERE,
+            Token::FROM => Token::FROM,
             Token::IDENT(value) => Token::IDENT(value.clone()),
             Token::NUMBER(value) => Token::NUMBER(*value),
-            Token::STRING(value) => Token::STRING(value.clone()),
-            Token::GE(value) => Token::GE(value.clone()),
-            Token::GT(value) => Token::GT(value.clone()),
-            Token::EQ(value) => Token::EQ(value.clone()),
-            Token::ASSIGN(value) => Token::ASSIGN(value.clone()),
-            Token::LT(value) => Token::LT(value.clone()),
-            Token::LE(value) => Token::LE(value.clone()),
-            Token::NE(value) => Token::NE(value.clone()),
-            Token::NOT(value) => Token::NOT(value.clone()),
-            Token::AND(value) => Token::AND(value.clone()),
-            Token::OR(value) => Token::OR(value.clone()),
-            Token::LPAREN(value) => Token::LPAREN(value.clone()),
-            Token::RPAREN(value) => Token::RPAREN(value.clone()),
-            Token::EOF(value) => Token::EOF(value.clone()),
+            // Token::STRING(value) => Token::STRING(value.clone()),
+            Token::GE => Token::GE,
+            Token::GT => Token::GT,
+            Token::EQ => Token::EQ,
+            Token::ASSIGN => Token::ASSIGN,
+            Token::LT => Token::LT,
+            Token::LE => Token::LE,
+            Token::NE => Token::NE,
+            Token::NOT => Token::NOT,
+            Token::AND => Token::AND,
+            Token::OR => Token::OR,
+            Token::LPAREN => Token::LPAREN,
+            Token::RPAREN => Token::RPAREN,
+            Token::COMMA => Token::COMMA,
+            Token::WILDCARD => Token::WILDCARD,
+            Token::STAR => Token::STAR,
+            Token::PLUS => Token::PLUS,
+            Token::MINUS => Token::MINUS,
+            Token::SLASH => Token::SLASH,
+            Token::EOF => Token::EOF,
         }
     }
 }
@@ -102,11 +114,11 @@ impl Lexer {
             self.advance();
         }
         if identifier == "select" {
-            self.tokens.push(Token::SELECT(identifier));
+            self.tokens.push(Token::SELECT);
         } else if identifier == "from" {
-            self.tokens.push(Token::FROM(identifier));
+            self.tokens.push(Token::FROM);
         } else if identifier == "where" {
-            self.tokens.push(Token::WHERE(identifier));
+            self.tokens.push(Token::WHERE);
         } else {
             let token = Token::IDENT(identifier);
             self.tokens.push(token);
@@ -140,54 +152,58 @@ impl Lexer {
                     self.advance();
                     if self.current_char == Some('=') {
                         self.advance();
-                        self.tokens.push(Token::EQ(String::from("==")));
+                        self.tokens.push(Token::EQ);
                     } else {
-                        self.tokens.push(Token::ASSIGN(String::from("=")));
+                        self.tokens.push(Token::ASSIGN);
                     }
                 }
                 cur if cur == '>' => {
                     self.advance();
                     if self.current_char == Some('=') {
                         self.advance();
-                        self.tokens.push(Token::GE(String::from(">=")));
+                        self.tokens.push(Token::GE);
                     } else {
-                        self.tokens.push(Token::GT(String::from(">")));
+                        self.tokens.push(Token::GT);
                     }
                 }
                 cur if cur == '<' => {
                     self.advance();
                     if self.current_char == Some('=') {
                         self.advance();
-                        self.tokens.push(Token::LE(String::from("<=")));
+                        self.tokens.push(Token::LE);
                     } else {
-                        self.tokens.push(Token::LT(String::from("<")));
+                        self.tokens.push(Token::LT);
                     }
                 }
                 cur if cur == '!' => {
                     self.advance();
                     if self.current_char == Some('=') {
                         self.advance();
-                        self.tokens.push(Token::NE(String::from("!=")));
+                        self.tokens.push(Token::NE);
                     } else {
-                        self.tokens.push(Token::NOT(String::from("!")));
+                        self.tokens.push(Token::NOT);
                     }
                 }
                 cur if cur == '&' => {
                     self.advance();
-                    self.tokens.push(Token::AND(String::from("&")));
+                    self.tokens.push(Token::AND);
                 }
                 cur if cur == '|' => {
                     self.advance();
-                    self.tokens.push(Token::OR(String::from("|")));
+                    self.tokens.push(Token::OR);
                 }
-                cur if cur == '(' => self.tokens.push(Token::LPAREN(String::from("("))),
-                cur if cur == ')' => self.tokens.push(Token::RPAREN(String::from(")"))),
+                cur if cur == ',' => {
+                    self.advance();
+                    self.tokens.push(Token::COMMA);
+                }
+                cur if cur == '(' => self.tokens.push(Token::LPAREN),
+                cur if cur == ')' => self.tokens.push(Token::RPAREN),
                 ' ' | '\t' | '\n' => self.advance(),
                 _ => self.error("Unexpected character"),
             }
             self.advance();
         }
-        self.tokens.push(Token::EOF(String::from("EOF")));
+        self.tokens.push(Token::EOF);
         self.tokens.clone()
     }
 }

@@ -1,4 +1,6 @@
+pub mod base;
 pub mod lexer;
+pub mod parser;
 
 use lexer::Lexer;
 use lexer::Token;
@@ -14,10 +16,7 @@ mod tests {
         let tokens = lexer.tokenize();
         assert_eq!(
             tokens,
-            vec![
-                Token::IDENT("hello".to_string()),
-                Token::EOF("EOF".to_string())
-            ]
+            vec![Token::SELECT, Token::IDENT("hello".to_string()), Token::EOF]
         );
     }
 }
