@@ -1,114 +1,81 @@
-use crate::base::{Expr, Node, Op, SelectNode};
+use crate::base::{Expr, Query};
 use crate::lexer::Token;
-use std::error::Error;
 
 pub struct Parser {
-    position: usize,
     tokens: Vec<Token>,
+    current: usize,
 }
 
 impl Parser {
     pub fn new(tokens: Vec<Token>) -> Self {
-        Parser {
-            position: 0,
-            tokens,
-        }
+        Parser { tokens, current: 0 }
     }
 
-    fn peek(&mut self) -> Option<&Token> {
-        if self.position < self.tokens.len() {
-            Some(&self.tokens[self.position])
+    pub fn peek(&self) -> Option<&Token> {
+        self.tokens.get(self.current)
+    }
+
+    pub fn advance(&mut self) {
+        if self.current < self.tokens.len() {
+            self.current += 1;
         } else {
-            None
+            panic!("End of input reached");
         }
     }
 
-    fn advance(&mut self) -> Option<&Token> {
-        if self.position < self.tokens.len() {
-            self.position += 1;
-            self.peek()
-        } else {
-            None
-        }
-    }
-
-    fn op_precedence(&mut self) -> u8 {
-        let token = self.peek().unwrap();
-        const PRECEDENCE_LOWEST: u8 = 1;
-        const PRECEDENCE_COMPARISON: u8 = 4;
-        const PRECEDENCE_LOGICAL: u8 = 5;
-
-        match token {
-            Token::LT(_) => PRECEDENCE_COMPARISON,
-            Token::GT(_) => PRECEDENCE_COMPARISON,
-            Token::EQ(_) => PRECEDENCE_COMPARISON,
-            Token::NE(_) => PRECEDENCE_COMPARISON,
-            Token::AND(_) => PRECEDENCE_LOGICAL,
-            Token::OR(_) => PRECEDENCE_LOGICAL,
-            _ => PRECEDENCE_LOWEST,
-        }
-    }
-
-    fn parse_number(&mut self) -> Expr {
-        let token = self.advance().unwrap();
-        match token {
-            Token::NUMBER(value) => Expr::Number(*value),
-            _ => unreachable!(),
-        }
-    }
-
-    fn parse_ident(&mut self) -> Expr {
-        let token = self.advance().unwrap();
-        match token {
-            Token::IDENT(name) => Expr::Identifier(name.clone()),
-            Token::SELECT(_) => Expr::Identifier("select".to_string()),
-            _ => unreachable!("Unexpected token {:?}", token),
-        }
-    }
-
-    pub fn match_token(&mut self, token: &Token) -> bool {
-        let tok = self.peek().unwrap();
-        if tok == token { true } else { false }
-    }
-
-    pub fn token_to_op(&mut self, token: &Token) -> Option<Op> {
-        match token {
-            Token::AND(_) => Some(Op::AND),
-            Token::OR(_) => Some(Op::OR),
-            Token::EQ(_) => Some(Op::EQ),
-            Token::NE(_) => Some(Op::NE),
-            Token::LT(_) => Some(Op::LT),
-            Token::GT(_) => Some(Op::GT),
-            Token::ASSIGN(_) => Some(Op::ASSIGN),
-            _ => None,
-        }
-    }
-
-    pub fn parse_expr(&mut self) -> Expr
-
-    pub fn parse_columns(&mut self) -> Vec<Expr> {
-        let mut columns = Vec::new();
-        loop {
-            columns.push(self.parse_ident().to_string());
-            if self.match_token(&Token::COMMA) {
+    pub fn consume(&mut self, expected: Token) {
+        if let Some(token) = self.peek() {
+            if token == &expected {
                 self.advance();
             } else {
-                panic!("Expected comma after column name")
+                panic!("Unexpected token");
             }
+        } else {
+            panic!("Unexpected end of input");
         }
     }
 
-    pub fn parse_select(&mut self) -> SelectNode {
-        if self.match_token(&Token::SELECT((String::from("Select")))) {
-            self.advance();
-            let columns = self.parse_columns();
+    pub fn match_token(&mut self, expected: Token) -> bool {
+        if let Some(token) = self.peek() {
+            if token == &expected {
+                self.advance();
+                true
+            } else {
+                false
+            }
+        } else {
+            false
         }
     }
-    pub fn parse(&mut self) -> Result<Node, String> {
-        let token = self.peek().unwrap_or(&Token::EOF);
-        match token {
-            Token::SELECT(_) => Ok(Node::Select(self.parse_select())),
-            _ => Err(format!("Unexpected token {:?}", token)),
+
+    pub fn op_prec(&mut self, tk: Token) -> u8 {
+        match tk {
+            Token::OR => 1,
+            Token::AND => 2,
+            Token::EQ | Token::NE => 3,
+            Token::LT | Token::GT | Token::LE | Token::GE => 4,
+            Token::PLUS | Token::MINUS => 5,
+            Token::STAR | Token::SLASH => 6,
+            Token::WILDCARD => 7,
+            _ => 0,
+        }
+    }
+
+    pub fn parse(&mut self) -> Result<Query, String> {
+        let mut tok = self.peek().unwrap();
+        match tok {
+            Token::SELECT => self.parse_select()?,
+            _ => panic!("Unexpected Token"),
+        }
+    }
+
+    pub fn parse_select(&mut self) -> Result<Query, String> {
+        if self.match_token(Token::SELECT) {
+            self.advance();
+            let expr = self.parse_expr();
+            
+        } else {
+            panic!("Unexpected Token");
         }
     }
 }

@@ -1,72 +1,38 @@
-use std::fmt;
-
-#[derive(Debug, Clone)]
-pub enum Op {
-    EQ,
-    ASSIGN,
-    NE,
-    LT,
-    GT,
-    AND,
-    OR,
-}
-impl fmt::Display for Op {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Op::EQ => write!(f, "="),
-            Op::ASSIGN => write!(f, ":="),
-            Op::NE => write!(f, "!="),
-            Op::LT => write!(f, "<"),
-            Op::GT => write!(f, ">"),
-            Op::AND => write!(f, "AND"),
-            Op::OR => write!(f, "OR"),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Expr {
-    Identifier(String),
+    Ident(String),
     Number(u64),
+    Wildcard,
     Binary {
-        op: Op,
         left: Box<Expr>,
+        op: String,
         right: Box<Expr>,
     },
-    WildCard,
-}
-
-impl Expr {
-    pub fn print(&self) -> String {
-        match self {
-            Expr::Identifier(id) => id.clone(),
-            Expr::Number(num) => num.to_string(),
-            Expr::Binary { op, left, right } => {
-                format!("({} {} {})", left.print(), op, right.print())
-            }
-            Expr::WildCard => "*".to_string(),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum SelectNode {
-    Select {
-        table: String,
-        columns: Vec<Expr>,
-        where_clause: Option<Expr>,
+    Unary {
+        op: String,
+        expr: Box<Expr>,
     },
 }
 
-pub enum InsertNode {
+#[derive(Debug, Clone, PartialEq)]
+pub enum Query {
+    Select {
+        columns: Vec<String>,
+        from: String,
+        where_clause: Option<Box<Expr>>,
+    },
     Insert {
         table: String,
         columns: Vec<String>,
-        values: Vec<String>,
+        values: Vec<Vec<Expr>>,
     },
-}
-
-pub enum Node {
-    Select(SelectNode),
-    Insert(InsertNode),
+    Update {
+        table: String,
+        set_clause: Vec<(String, Box<Expr>)>,
+        where_clause: Option<Box<Expr>>,
+    },
+    Delete {
+        table: String,
+        where_clause: Option<Box<Expr>>,
+    },
 }

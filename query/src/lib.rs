@@ -16,11 +16,7 @@ mod tests {
         let tokens = lexer.tokenize();
         assert_eq!(
             tokens,
-            vec![
-                Token::SELECT("select".to_string()),
-                Token::IDENT("hello".to_string()),
-                Token::EOF
-            ]
+            vec![Token::SELECT, Token::IDENT("hello".to_string()), Token::EOF]
         );
     }
 }
