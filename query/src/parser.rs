@@ -11,7 +11,7 @@ impl Parser {
         Parser { tokens, current: 0 }
     }
 
-    pub fn peek(&self) -> Option<&Token> {
+    pub fn peek(&mut self) -> Option<&Token> {
         self.tokens.get(self.current)
     }
 
@@ -48,7 +48,8 @@ impl Parser {
         }
     }
 
-    pub fn op_prec(&mut self, tk: Token) -> u8 {
+    pub fn op_prec(&mut self) -> u8 {
+        let tk = self.peek().unwrap();
         match tk {
             Token::OR => 1,
             Token::AND => 2,
@@ -64,18 +65,122 @@ impl Parser {
     pub fn parse(&mut self) -> Result<Query, String> {
         let mut tok = self.peek().unwrap();
         match tok {
-            Token::SELECT => self.parse_select()?,
+            Token::SELECT => self.parse_select(),
             _ => panic!("Unexpected Token"),
         }
     }
 
     pub fn parse_select(&mut self) -> Result<Query, String> {
         if self.match_token(Token::SELECT) {
+            let expr = self.parse_list();
             self.advance();
-            let expr = self.parse_expr();
-            
+            self.match_token(Token::FROM);
+            let table = self.parse_ident();
+            self.advance();
+            if self.match_token(Token::EOF) {
+                Ok(Query::Select {
+                    columns: expr,
+                    from: table,
+                    where_clause: None,
+                })
+            } else {
+                let where_clause = self.parse_expr(0);
+                Ok(Query::Select {
+                    columns: expr,
+                    from: table,
+                    where_clause: Some(Box::new(where_clause)),
+                })
+            }
         } else {
             panic!("Unexpected Token");
+        }
+    }
+
+    pub fn parse_list(&mut self) -> Vec<Expr> {
+        let mut exprs = Vec::new();
+
+        while !self.match_token(Token::FROM) {
+            exprs.push(self.parse_expr(0));
+            if self.match_token(Token::COMMA) {
+                self.advance();
+            } else {
+                break;
+            }
+        }
+        exprs
+    }
+
+    pub fn parse_expr(&mut self, precedence: u8) -> Expr {
+        let mut left = self.parse_primary();
+
+        while self.current < self.tokens.len() {
+            let op = self.op_prec();
+            if op > precedence {
+                self.advance();
+                let right = self.parse_expr(op);
+                // self.match_token(Token::RPAREN);
+                self.advance();
+                left = Expr::Binary {
+                    left: Box::new(left),
+                    op: self.parse_ident(),
+                    right: Box::new(right),
+                };
+            } else {
+                break;
+            }
+        }
+        left
+    }
+
+    pub fn parse_ident(&mut self) -> String {
+        let mut token = self.peek().unwrap().clone();
+        let ident;
+        match token {
+            Token::IDENT(name) => {
+                ident = name;
+            }
+            _ => panic!("Unexpected Token {:?}", token),
+        }
+        ident
+    }
+
+    pub fn parse_primary(&mut self) -> Expr {
+        match self.peek().unwrap() {
+            Token::LPAREN => {
+                self.advance();
+                let expr = self.parse_expr(0);
+                self.match_token(Token::RPAREN);
+                self.advance();
+                expr
+            }
+            Token::NUMBER(value) => self.parse_number(),
+            Token::STRING(value) => self.parse_string(),
+            Token::IDENT(value) => Expr::Ident(self.parse_ident()),
+            _ => panic!("Unexpected Token {:?}", self.peek().unwrap()),
+        }
+    }
+
+    pub fn parse_number(&mut self) -> Expr {
+        let token = self.tokens[self.current - 1].clone();
+        match token {
+            Token::NUMBER(value) => {
+                let expr = Expr::Number(value);
+                self.advance();
+                expr
+            }
+            _ => panic!("Unexpected Token"),
+        }
+    }
+
+    pub fn parse_string(&mut self) -> Expr {
+        let token = self.tokens[self.current - 1].clone();
+        match token {
+            Token::STRING(value) => {
+                let expr = Expr::String(value);
+                self.advance();
+                expr
+            }
+            _ => panic!("Unexpected Token"),
         }
     }
 }
