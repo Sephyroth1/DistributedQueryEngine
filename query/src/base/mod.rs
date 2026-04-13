@@ -2,6 +2,7 @@
 pub enum Expr {
     Ident(String),
     Number(u64),
+    String(String),
     Wildcard,
     Binary {
         left: Box<Expr>,
@@ -17,7 +18,7 @@ pub enum Expr {
 #[derive(Debug, Clone, PartialEq)]
 pub enum Query {
     Select {
-        columns: Vec<String>,
+        columns: Vec<Expr>,
         from: String,
         where_clause: Option<Box<Expr>>,
     },

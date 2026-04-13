@@ -1,5 +1,7 @@
 pub mod base;
+pub mod bytecode_comp;
 pub mod lexer;
+pub mod logical;
 pub mod parser;
 
 use lexer::Lexer;
