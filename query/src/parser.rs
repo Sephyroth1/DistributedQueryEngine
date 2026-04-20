@@ -1,14 +1,19 @@
-use crate::base::{Expr, Query};
+use crate::base::{Expr, Query, Table, Value};
 use crate::lexer::Token;
 
 pub struct Parser {
     tokens: Vec<Token>,
     current: usize,
+    column_id: usize,
 }
 
 impl Parser {
     pub fn new(tokens: Vec<Token>) -> Self {
-        Parser { tokens, current: 0 }
+        Parser {
+            tokens,
+            current: 0,
+            column_id: 0,
+        }
     }
 
     pub fn peek(&mut self) -> Option<&Token> {
@@ -63,7 +68,7 @@ impl Parser {
     }
 
     pub fn parse(&mut self) -> Result<Query, String> {
-        let mut tok = self.peek().unwrap();
+        let tok = self.peek().unwrap();
         match tok {
             Token::SELECT => self.parse_select(),
             _ => panic!("Unexpected Token"),
@@ -74,8 +79,10 @@ impl Parser {
         if self.match_token(Token::SELECT) {
             let expr = self.parse_list();
             self.advance();
+            println!("Peek: {:?}", self.peek().unwrap());
             self.match_token(Token::FROM);
-            let table = self.parse_ident();
+            println!("Peek: {:?}", self.peek().unwrap());
+            let table = self.parse_table(&expr);
             self.advance();
             if self.match_token(Token::EOF) {
                 Ok(Query::Select {
@@ -84,6 +91,7 @@ impl Parser {
                     where_clause: None,
                 })
             } else {
+                println!("Peek: {:?}", self.peek().unwrap());
                 let where_clause = self.parse_expr(0);
                 Ok(Query::Select {
                     columns: expr,
@@ -95,6 +103,25 @@ impl Parser {
             panic!("Unexpected Token");
         }
     }
+
+    pub fn parse_table(&mut self, columns: &Vec<Expr>) -> Table {
+        let table = Table {
+            name: self.parse_ident(),
+            table_id: 0,
+            columns: columns.clone(),
+        };
+        self.advance();
+        table
+    }
+
+    // pub fn parse_column(&mut self) -> Expr {
+    //     let column = Expr::Column {
+    //         column_id: self.column_id,
+    //     };
+    //     self.column_id += 1;
+    //     self.advance();
+    //     column
+    // }
 
     pub fn parse_list(&mut self) -> Vec<Expr> {
         let mut exprs = Vec::new();
@@ -133,7 +160,7 @@ impl Parser {
     }
 
     pub fn parse_ident(&mut self) -> String {
-        let mut token = self.peek().unwrap().clone();
+        let token = self.peek().unwrap().clone();
         let ident;
         match token {
             Token::IDENT(name) => {
@@ -153,9 +180,22 @@ impl Parser {
                 self.advance();
                 expr
             }
-            Token::NUMBER(value) => self.parse_number(),
-            Token::STRING(value) => self.parse_string(),
-            Token::IDENT(value) => Expr::Ident(self.parse_ident()),
+            Token::NUMBER(_) => self.parse_number(),
+            Token::STRING(_) => self.parse_string(),
+            Token::IDENT(value) => {
+                if value == "true" {
+                    Expr::Literal(Value::Bool(true))
+                } else if value == "false" {
+                    Expr::Literal(Value::Bool(false))
+                } else {
+                    let val = Expr::Column {
+                        name: value.clone(),
+                        column_id: self.column_id,
+                    };
+                    self.column_id += 1;
+                    val
+                }
+            }
             _ => panic!("Unexpected Token {:?}", self.peek().unwrap()),
         }
     }
@@ -164,7 +204,7 @@ impl Parser {
         let token = self.tokens[self.current - 1].clone();
         match token {
             Token::NUMBER(value) => {
-                let expr = Expr::Number(value);
+                let expr = Expr::Literal(Value::Int(value));
                 self.advance();
                 expr
             }
@@ -176,7 +216,7 @@ impl Parser {
         let token = self.tokens[self.current - 1].clone();
         match token {
             Token::STRING(value) => {
-                let expr = Expr::String(value);
+                let expr = Expr::Literal(Value::String(value));
                 self.advance();
                 expr
             }

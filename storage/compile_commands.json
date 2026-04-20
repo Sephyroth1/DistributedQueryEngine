@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/Users/Hp/Desktop/Nothing/practice-backend/CodingChallenges/PersonalProject/DistributedDB/storage/build",
+  "command": "D:\\LLVM\\bin\\clang++.exe -D_MBCS -O0 -std=gnu++23 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Xclang -gcodeview @CMakeFiles\\storage.dir\\src\\main.cpp.obj.modmap -o CMakeFiles\\storage.dir\\src\\main.cpp.obj -c C:\\Users\\Hp\\Desktop\\Nothing\\practice-backend\\CodingChallenges\\PersonalProject\\DistributedDB\\storage\\src\\main.cpp",
+  "file": "C:/Users/Hp/Desktop/Nothing/practice-backend/CodingChallenges/PersonalProject/DistributedDB/storage/src/main.cpp",
+  "output": "C:/Users/Hp/Desktop/Nothing/practice-backend/CodingChallenges/PersonalProject/DistributedDB/storage/build/CMakeFiles/storage.dir/src/main.cpp.obj"
+}
+]
