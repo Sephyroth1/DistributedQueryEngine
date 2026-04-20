@@ -120,8 +120,8 @@ The system is divided into the following layers:
 
 ### Phase 1: Single Node Execution
 
-* [ ] Basic query parser
-* [ ] AST representation
+* [x] Basic query parser
+* [x] AST representation
 * [ ] Execution engine (VM)
 * [ ] In-memory storage
 
