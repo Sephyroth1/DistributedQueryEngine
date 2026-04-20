@@ -1,8 +1,32 @@
+pub enum DataTypes {
+    INT,
+    FLOAT,
+    BOOL,
+    STRING,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Value {
+    Int(u64),
+    Float(f64),
+    Bool(bool),
+    String(String),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Table {
+    pub table_id: usize,
+    pub name: String,
+    pub columns: Vec<Expr>,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Expr {
-    Ident(String),
-    Number(u64),
-    String(String),
+    Column {
+        name: String,
+        column_id: usize,
+    },
+    Literal(Value),
     Wildcard,
     Binary {
         left: Box<Expr>,
@@ -16,10 +40,27 @@ pub enum Expr {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum Expr1 {
+    Ident(String),
+    Number(u64),
+    String(String),
+    Wildcard,
+    Binary {
+        left: Box<Expr1>,
+        op: String,
+        right: Box<Expr1>,
+    },
+    Unary {
+        op: String,
+        expr: Box<Expr1>,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum Query {
     Select {
         columns: Vec<Expr>,
-        from: String,
+        from: Table,
         where_clause: Option<Box<Expr>>,
     },
     Insert {

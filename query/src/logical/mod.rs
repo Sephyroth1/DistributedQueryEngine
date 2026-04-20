@@ -1,9 +1,9 @@
-use crate::base::{Expr, Query};
+use crate::base::{Expr, Query, Table, Value};
 
 #[derive(Debug, Clone)]
 pub enum LogicalPlan {
     Scan {
-        table: String,
+        table: Table,
     },
     Project {
         input: Box<LogicalPlan>,
@@ -46,7 +46,7 @@ impl LogicalPlan {
                 let plan = LogicalPlan::Scan { table: from };
                 let plan1 = LogicalPlan::Filter {
                     input: Box::new(plan),
-                    predicate: where_clause.unwrap_or(Box::new(Expr::Ident("true".to_string()))),
+                    predicate: where_clause.unwrap_or(Box::new(Expr::Literal(Value::Bool(true)))),
                 };
                 let plan2 = LogicalPlan::Project {
                     input: Box::new(plan1),

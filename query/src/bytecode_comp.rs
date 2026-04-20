@@ -1,4 +1,4 @@
-use crate::base::Expr;
+use crate::base::{Expr, Table};
 use crate::logical::LogicalPlan;
 
 // pub enum OpCode {
@@ -11,7 +11,7 @@ use crate::logical::LogicalPlan;
 pub enum Instruction {
     Scan {
         dest: u8,
-        table: String,
+        table: Table,
     },
     Project {
         src: u8,
