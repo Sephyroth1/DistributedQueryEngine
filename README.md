@@ -8,7 +8,7 @@ This project is a **from-scratch distributed query engine** designed to explore 
 * Query execution
 * Distributed systems
 * Storage engines
-* Virtual machines
+* Virtual machine
 * Compiler-like parsing
 
 The goal is not to build a production database, but to deeply understand how such systems work by implementing them end-to-end.
