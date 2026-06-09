@@ -1,0 +1,14 @@
+[
+  {
+    "label": "run vm",
+    "command": "cargo run",
+  },
+  {
+    "label": "cargo check",
+    "command": "cargo check",
+  },
+  {
+    "label": "cargo test",
+    "command": "cargo test",
+  },
+]
