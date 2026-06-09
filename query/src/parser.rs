@@ -1,4 +1,4 @@
-use crate::base::{Expr, Query, Table, Value};
+use crate::base::{Expr, Operator, Query, Table, Value};
 use crate::lexer::Token;
 
 pub struct Parser {
@@ -77,13 +77,15 @@ impl Parser {
 
     pub fn parse_select(&mut self) -> Result<Query, String> {
         if self.match_token(Token::SELECT) {
+            println!("SELECT");
             let expr = self.parse_list();
+            println!("expr: {:?}", expr);
             self.advance();
-            println!("Peek: {:?}", self.peek().unwrap());
-            self.match_token(Token::FROM);
             println!("Peek: {:?}", self.peek().unwrap());
             let table = self.parse_table(&expr);
             self.advance();
+            println!("Peek: {:?}", self.peek().unwrap());
+
             if self.match_token(Token::EOF) {
                 Ok(Query::Select {
                     columns: expr,
@@ -91,8 +93,9 @@ impl Parser {
                     where_clause: None,
                 })
             } else {
-                println!("Peek: {:?}", self.peek().unwrap());
+                // println!("Peek: {:?}", self.peek().unwrap());
                 let where_clause = self.parse_expr(0);
+                println!("where_clause: {:?}", where_clause);
                 Ok(Query::Select {
                     columns: expr,
                     from: table,
@@ -127,8 +130,10 @@ impl Parser {
         let mut exprs = Vec::new();
 
         while !self.match_token(Token::FROM) {
-            exprs.push(self.parse_expr(0));
+            exprs.push(self.parse_primary());
+            println!("token: {:?}", self.tokens[self.current]);
             if self.match_token(Token::COMMA) {
+                println!("token: {:?}", self.tokens[self.current]);
                 self.advance();
             } else {
                 break;
@@ -137,23 +142,45 @@ impl Parser {
         exprs
     }
 
+    pub fn token_to_operator(&self, token: &Token) -> Option<Operator> {
+        match token {
+            Token::EQ => Some(Operator::Eq),
+            Token::NE => Some(Operator::Neq),
+            Token::LT => Some(Operator::Lt),
+            Token::GT => Some(Operator::Gt),
+            Token::LE => Some(Operator::LtEq),
+            Token::GE => Some(Operator::GtEq),
+            Token::AND => Some(Operator::And),
+            Token::OR => Some(Operator::Or),
+            _ => None,
+        }
+    }
+
     pub fn parse_expr(&mut self, precedence: u8) -> Expr {
+        println!("expr peek: {:?}", self.peek().unwrap());
         let mut left = self.parse_primary();
 
-        while self.current < self.tokens.len() {
+        println!("expr peek 1: {:?}", self.peek().unwrap());
+
+        while self.current < self.tokens.len() && self.tokens[self.current] != Token::EOF {
+            let operation = self.peek().unwrap().clone();
             let op = self.op_prec();
-            if op > precedence {
+            println!("op: {:?}", operation);
+            if op >= precedence {
+                println!("expr peek 2: {:?}", self.peek().unwrap());
                 self.advance();
+                println!("expr peek 2.5: {:?}", self.peek().unwrap());
                 let right = self.parse_expr(op);
                 // self.match_token(Token::RPAREN);
+                println!("expr peek 3: {:?}", self.peek().unwrap());
                 self.advance();
                 left = Expr::Binary {
                     left: Box::new(left),
-                    op: self.parse_ident(),
+                    op: self.token_to_operator(&operation).unwrap(),
                     right: Box::new(right),
                 };
             } else {
-                break;
+                left.clone();
             }
         }
         left
@@ -172,6 +199,7 @@ impl Parser {
     }
 
     pub fn parse_primary(&mut self) -> Expr {
+        println!("parse_primary: {:?}", self.peek().unwrap());
         match self.peek().unwrap() {
             Token::LPAREN => {
                 self.advance();
@@ -184,8 +212,10 @@ impl Parser {
             Token::STRING(_) => self.parse_string(),
             Token::IDENT(value) => {
                 if value == "true" {
+                    self.advance();
                     Expr::Literal(Value::Bool(true))
                 } else if value == "false" {
+                    self.advance();
                     Expr::Literal(Value::Bool(false))
                 } else {
                     let val = Expr::Column {
@@ -193,6 +223,7 @@ impl Parser {
                         column_id: self.column_id,
                     };
                     self.column_id += 1;
+                    self.advance();
                     val
                 }
             }
@@ -201,7 +232,8 @@ impl Parser {
     }
 
     pub fn parse_number(&mut self) -> Expr {
-        let token = self.tokens[self.current - 1].clone();
+        let token = self.tokens[self.current].clone();
+        println!("parse_number: {:?}", token);
         match token {
             Token::NUMBER(value) => {
                 let expr = Expr::Literal(Value::Int(value));
