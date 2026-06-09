@@ -6,6 +6,18 @@ pub enum DataTypes {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum Operator {
+    Eq,
+    Neq,
+    Lt,
+    Gt,
+    LtEq,
+    GtEq,
+    And,
+    Or,
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     Int(u64),
     Float(f64),
@@ -26,11 +38,14 @@ pub enum Expr {
         name: String,
         column_id: usize,
     },
+    Table {
+        name: String,
+    },
     Literal(Value),
     Wildcard,
     Binary {
         left: Box<Expr>,
-        op: String,
+        op: Operator,
         right: Box<Expr>,
     },
     Unary {

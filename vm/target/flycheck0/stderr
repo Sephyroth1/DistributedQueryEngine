@@ -1,0 +1,114 @@
+   0.053857400s  INFO prepare_target{force=false package_id=vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm) target="vm"}: cargo::core::compiler::fingerprint: fingerprint error for vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("vm", ["lib"], "C:\\Users\\Hp\\Desktop\\Nothing\\practice-backend\\CodingChallenges\\PersonalProject\\DistributedDB\\vm\\src\\lib.rs", Edition2024) }
+   0.054328500s  INFO prepare_target{force=false package_id=vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm) target="vm"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm\target\debug\.fingerprint\vm-2075e730ae38d2f5\lib-vm`
+
+Caused by:
+    The system cannot find the file specified. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_repo
+   6: git_filter_source_repo
+   7: git_filter_source_repo
+   8: git_filter_source_repo
+   9: git_filter_source_repo
+  10: git_filter_source_repo
+  11: git_libgit2_prerelease
+  12: <unknown>
+  13: <unknown>
+  14: <unknown>
+  15: <unknown>
+  16: git_midx_writer_dump
+  17: git_filter_source_repo
+  18: git_midx_writer_dump
+  19: BaseThreadInitThunk
+  20: RtlUserThreadStart
+   0.099848800s  INFO prepare_target{force=false package_id=vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm) target="vm"}: cargo::core::compiler::fingerprint: fingerprint error for vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("vm", ["lib"], "C:\\Users\\Hp\\Desktop\\Nothing\\practice-backend\\CodingChallenges\\PersonalProject\\DistributedDB\\vm\\src\\lib.rs", Edition2024) }
+   0.099974900s  INFO prepare_target{force=false package_id=vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm) target="vm"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm\target\debug\.fingerprint\vm-55450e36392fd705\test-lib-vm`
+
+Caused by:
+    The system cannot find the file specified. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_repo
+   6: git_filter_source_repo
+   7: git_filter_source_repo
+   8: git_filter_source_repo
+   9: git_filter_source_repo
+  10: git_filter_source_repo
+  11: git_libgit2_prerelease
+  12: <unknown>
+  13: <unknown>
+  14: <unknown>
+  15: <unknown>
+  16: git_midx_writer_dump
+  17: git_filter_source_repo
+  18: git_midx_writer_dump
+  19: BaseThreadInitThunk
+  20: RtlUserThreadStart
+   0.102202000s  INFO prepare_target{force=false package_id=vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm) target="main"}: cargo::core::compiler::fingerprint: fingerprint error for vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm)/Check { test: false }/TargetInner { name: "main", doc: true, ..: with_path("C:\\Users\\Hp\\Desktop\\Nothing\\practice-backend\\CodingChallenges\\PersonalProject\\DistributedDB\\vm\\src\\bin\\main.rs", Edition2024) }
+   0.102287700s  INFO prepare_target{force=false package_id=vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm) target="main"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm\target\debug\.fingerprint\vm-6ce6d2d13e75c219\bin-main`
+
+Caused by:
+    The system cannot find the file specified. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_repo
+   6: git_filter_source_repo
+   7: git_filter_source_repo
+   8: git_filter_source_repo
+   9: git_filter_source_repo
+  10: git_filter_source_repo
+  11: git_libgit2_prerelease
+  12: <unknown>
+  13: <unknown>
+  14: <unknown>
+  15: <unknown>
+  16: git_midx_writer_dump
+  17: git_filter_source_repo
+  18: git_midx_writer_dump
+  19: BaseThreadInitThunk
+  20: RtlUserThreadStart
+   0.104447200s  INFO prepare_target{force=false package_id=vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm) target="main"}: cargo::core::compiler::fingerprint: fingerprint error for vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm)/Check { test: true }/TargetInner { name: "main", doc: true, ..: with_path("C:\\Users\\Hp\\Desktop\\Nothing\\practice-backend\\CodingChallenges\\PersonalProject\\DistributedDB\\vm\\src\\bin\\main.rs", Edition2024) }
+   0.104532100s  INFO prepare_target{force=false package_id=vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm) target="main"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm\target\debug\.fingerprint\vm-8108012c70999c0f\test-bin-main`
+
+Caused by:
+    The system cannot find the file specified. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_repo
+   6: git_filter_source_repo
+   7: git_filter_source_repo
+   8: git_filter_source_repo
+   9: git_filter_source_repo
+  10: git_filter_source_repo
+  11: git_libgit2_prerelease
+  12: <unknown>
+  13: <unknown>
+  14: <unknown>
+  15: <unknown>
+  16: git_midx_writer_dump
+  17: git_filter_source_repo
+  18: git_midx_writer_dump
+  19: BaseThreadInitThunk
+  20: RtlUserThreadStart
+    Checking vm v0.1.0 (C:\Users\Hp\Desktop\Nothing\practice-backend\CodingChallenges\PersonalProject\DistributedDB\vm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.27s
